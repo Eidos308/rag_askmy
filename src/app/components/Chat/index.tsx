@@ -18,7 +18,7 @@ export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: "¡Hola! Soy tu asistente médico virtual. Puedo ayudarte con información basada en los documentos disponibles. ¿Cómo puedo ayudarte hoy?",
+      text: "¡Hola! Soy tu asistente médico virtual. Puedo ayudarte con información médica general y preguntas. Ten en cuenta que no soy un sustituto del consejo médico profesional. ¿Cómo puedo ayudarte hoy?",
       isBot: true,
       timestamp: new Date()
     }
