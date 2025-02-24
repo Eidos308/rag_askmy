@@ -1,0 +1,147 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Paleta principal - Colores más claros y profesionales */
+  --background: #fafafa;
+  --foreground: #334155;
+  --primary: #0284c7;
+  --primary-light: #38bdf8;
+  --primary-dark: #0369a1;
+
+  /* Colores de acento y estado */
+  --success: #059669;
+  --warning: #eab308;
+  --error: #dc2626;
+
+  /* Colores específicos para mensajes */
+  --bot-message-bg: #ffffff;
+  --bot-message-border: #e2e8f0;
+  --user-message-bg: #0284c7;
+  --user-message-text: #ffffff;
+
+  /* Colores de interfaz */
+  --border-color: #f1f5f9;
+  --input-bg: #ffffff;
+  --header-bg: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #111827;
+    --foreground: #e2e8f0;
+    --primary: #0ea5e9;
+    --primary-light: #38bdf8;
+    --primary-dark: #0369a1;
+
+    --bot-message-bg: #1e293b;
+    --bot-message-border: #334155;
+    --user-message-bg: #0ea5e9;
+    --user-message-text: #ffffff;
+
+    --border-color: #1e293b;
+    --input-bg: #1e293b;
+    --header-bg: #111827;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+  .chat-container {
+    @apply max-w-3xl mx-auto h-screen flex flex-col;
+  }
+
+  .chat-header {
+    @apply bg-[var(--header-bg)] px-4 py-3 border-b border-[var(--border-color)] flex items-center gap-3 sticky top-0 z-10;
+  }
+
+  .header-avatar {
+    @apply w-10 h-10 rounded-full bg-sky-500 flex items-center justify-center text-white font-semibold text-base shadow-sm;
+  }
+
+  .header-info {
+    @apply flex-1;
+  }
+
+  .header-title {
+    @apply text-base font-medium text-slate-800 dark:text-slate-100;
+  }
+
+  .header-subtitle {
+    @apply text-xs text-slate-500 dark:text-slate-400;
+  }
+
+  .chat-messages {
+    @apply flex-1 overflow-y-auto px-4 py-6 space-y-4;
+  }
+
+  .message {
+    @apply max-w-[280px] sm:max-w-[380px] rounded-2xl px-4 py-2.5 transition-all duration-200 text-[15px] leading-relaxed;
+  }
+
+  .bot-message {
+    @apply bg-[var(--bot-message-bg)] mr-auto border border-[var(--bot-message-border)] text-slate-700 dark:text-slate-200;
+  }
+
+  .user-message {
+    @apply bg-[var(--primary)] text-[var(--user-message-text)] ml-auto;
+  }
+
+  .message-timestamp {
+    @apply text-[11px] opacity-60 mt-1 select-none;
+  }
+
+  .chat-input-container {
+    @apply border-t border-[var(--border-color)] bg-[var(--header-bg)] px-4 py-3 sticky bottom-0 z-10 relative;
+  }
+
+  .chat-input {
+    @apply w-full px-4 py-2 rounded-full border border-[var(--border-color)] bg-[var(--input-bg)] placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-transparent transition-colors;
+  }
+
+  .send-button {
+    @apply absolute right-6 top-1/2 -translate-y-1/2 bg-[var(--primary)] text-white rounded-full p-2 hover:bg-[var(--primary-dark)] active:scale-95 transition-all duration-200 focus:outline-none;
+  }
+}
+
+/* Animaciones para mensajes */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message {
+  animation: slideIn 0.2s ease-out forwards;
+}
+
+/* Scrollbar personalizada */
+.chat-messages::-webkit-scrollbar {
+  width: 4px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background-color: #e2e8f0;
+  border-radius: 2px;
+}
+
+.dark .chat-messages::-webkit-scrollbar-thumb {
+  background-color: #334155;
+}
