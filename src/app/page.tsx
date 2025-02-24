@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import styles from './chat.module.css';
 import Image from 'next/image';
 
@@ -10,12 +10,6 @@ interface Message {
   text: string;
   isBot: boolean;
   timestamp: Date;
-}
-
-// Define the structure for WebSocket messages
-interface WebSocketMessage {
-  action: string;
-  query: string;
 }
 
 const WEBSOCKET_URL = process.env.NEXT_PUBLIC_WEBSOCKET_URL as string;
@@ -39,10 +33,9 @@ export default function Chat() {
   const [isTyping, setIsTyping] = useState(false);
 
   // Initialize WebSocket connection
-  const connectWebSocket = () => {
+  const connectWebSocket = useCallback(() => {
     websocketRef.current = new WebSocket(WEBSOCKET_URL);
 
-    // Handle connection events
     websocketRef.current.onopen = () => {
       setIsConnected(true);
     };
@@ -55,7 +48,6 @@ export default function Chat() {
       setIsConnected(false);
     };
 
-    // Handle incoming messages
     websocketRef.current.onmessage = (event) => {
       setIsTyping(false);
       try {
@@ -78,19 +70,18 @@ export default function Chat() {
         setMessages(prev => [...prev, newMessage]);
       }
     };
-  };
+  }, []);
 
   // Connect WebSocket on component mount
   useEffect(() => {
     connectWebSocket();
 
-    // Cleanup on unmount
     return () => {
       if (websocketRef.current) {
         websocketRef.current.close();
       }
     };
-  }, []);
+  }, [connectWebSocket]);
 
   // Auto-scroll to latest message
   const scrollToBottom = () => {
