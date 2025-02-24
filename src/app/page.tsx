@@ -37,7 +37,7 @@ export default function Chat() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: "Hello! I'm your virtual medical assistant. I can help you with general medical information and questions. Please note that I'm not a substitute for professional medical advice. How can I assist you today?",
+      text: "¡Hola! Soy tu asistente médico virtual. Puedo ayudarte con información médica general y preguntas. Ten en cuenta que no soy un sustituto del consejo médico profesional. ¿Cómo puedo ayudarte hoy?",
       isBot: true,
       timestamp: new Date()
     }
@@ -72,16 +72,16 @@ export default function Chat() {
         const response = JSON.parse(event.data);
         const newMessage: Message = {
           id: Date.now().toString(),
-          text: response.answer || response.error || "Sorry, I couldn't process that request.",
+          text: response.answer || response.error || "Lo siento, no pude procesar esa solicitud.",
           isBot: true,
           timestamp: new Date()
         };
         setMessages(prev => [...prev, newMessage]);
         scrollToBottom();
-      } catch {
+      } catch (_error) {
         const newMessage: Message = {
           id: Date.now().toString(),
-          text: "Sorry, I received an invalid response.",
+          text: "Lo siento, recibí una respuesta inválida.",
           isBot: true,
           timestamp: new Date()
         };
@@ -185,7 +185,7 @@ export default function Chat() {
           type="text"
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
-          placeholder={isConnected ? "Type your medical question..." : "Connecting..."}
+          placeholder={isConnected ? "Escribe tu pregunta médica..." : "Conectando..."}
           className={styles['chat-input']}
           disabled={!isConnected}
         />
