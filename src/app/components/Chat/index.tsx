@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import styles from './chat.module.css';
 import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';

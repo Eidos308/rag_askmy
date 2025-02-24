@@ -46,7 +46,7 @@ async function initializeVectorStore() {
   try {
     const docsPath = path.join(process.cwd(), 'public', 'docs');
     const pdfFiles = fs.readdirSync(docsPath).filter(file => file.endsWith('.pdf'));
-    let allDocs = [];
+    const allDocs = [];
     
     const textSplitter = new RecursiveCharacterTextSplitter({
       chunkSize: 800,
