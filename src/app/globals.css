@@ -3,46 +3,46 @@
 @tailwind utilities;
 
 :root {
-  /* Main palette - Light and professional colors */
-  --background: #fafafa;
-  --foreground: #334155;
-  --primary: #0284c7;
-  --primary-light: #38bdf8;
-  --primary-dark: #0369a1;
+  /* Main palette - AskMy brand colors */
+  --background: #ffffff;
+  --foreground: #0F3077;
+  --primary: #0F3077;
+  --primary-light: #61DFE5;
+  --primary-dark: #0A245A;
 
   /* Accent and state colors */
-  --success: #059669;
-  --warning: #eab308;
-  --error: #dc2626;
+  --success: #61DFE5;
+  --warning: #61DFE5;
+  --error: #0F3077;
 
   /* Message-specific colors */
   --bot-message-bg: #ffffff;
-  --bot-message-border: #e2e8f0;
-  --user-message-bg: #0284c7;
+  --bot-message-border: #E2E8F0;
+  --user-message-bg: #0F3077;
   --user-message-text: #ffffff;
 
   /* Interface colors */
-  --border-color: #f1f5f9;
+  --border-color: #E2E8F0;
   --input-bg: #ffffff;
   --header-bg: #ffffff;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #111827;
-    --foreground: #e2e8f0;
-    --primary: #0ea5e9;
-    --primary-light: #38bdf8;
-    --primary-dark: #0369a1;
+    --background: #0A245A;
+    --foreground: #ffffff;
+    --primary: #61DFE5;
+    --primary-light: #7DE8ED;
+    --primary-dark: #0F3077;
 
-    --bot-message-bg: #1e293b;
-    --bot-message-border: #334155;
-    --user-message-bg: #0ea5e9;
-    --user-message-text: #ffffff;
+    --bot-message-bg: #0F3077;
+    --bot-message-border: #61DFE5;
+    --user-message-bg: #61DFE5;
+    --user-message-text: #0F3077;
 
     --border-color: #1e293b;
-    --input-bg: #1e293b;
-    --header-bg: #111827;
+    --input-bg: #0F3077;
+    --header-bg: #0A245A;
   }
 }
 

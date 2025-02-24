@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import styles from './chat.module.css';
+import Image from 'next/image';
 
 // Define the structure for chat messages
 interface Message {
@@ -18,19 +19,6 @@ interface WebSocketMessage {
 }
 
 const WEBSOCKET_URL = process.env.NEXT_PUBLIC_WEBSOCKET_URL as string;
-
-// Medical cross icon component
-function MedicalIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-    >
-      <path d="M21 5h-2.64l1.14-3.14L17.5 1l-1.96 5H3v2l2 6-2 6v2h18v-2l-2-6 2-6V5zm-3.5 9h-1v1.5h-2v-1.5h-1v-2h1v-1.5h2v1.5h1v2z" />
-    </svg>
-  );
-}
 
 export default function Chat() {
   // Initialize chat with welcome message
@@ -104,7 +92,12 @@ export default function Chat() {
 
   // Auto-scroll to latest message
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end'
+      });
+    }
   };
 
   // Handle message submission
@@ -141,7 +134,13 @@ export default function Chat() {
     <div className={styles['chat-container']}>
       <header className={styles['chat-header']}>
         <div className={styles['header-avatar']}>
-          <MedicalIcon />
+          <Image
+            src="/askmy-logo-nobg.png"
+            alt="AskMy Logo"
+            width={40}
+            height={40}
+            className={styles['avatar-image']}
+          />
         </div>
         <div className={styles['header-info']}>
           <h1 className={styles['header-title']}>AskMy</h1>
@@ -163,7 +162,13 @@ export default function Chat() {
           >
             {message.isBot && (
               <div className={styles['bot-avatar']}>
-                <MedicalIcon />
+                <Image
+                  src="/askmy-logo-nobg.png"
+                  alt="AskMy Logo"
+                  width={30}
+                  height={30}
+                  className={styles['avatar-image']}
+                />
               </div>
             )}
             <div className={styles['message-content']}>
@@ -177,7 +182,7 @@ export default function Chat() {
             </div>
           </div>
         ))}
-        <div ref={messagesEndRef} />
+        <div ref={messagesEndRef} style={{ height: 1 }} />
       </div>
 
       <form onSubmit={handleSubmit} className={styles['chat-input-container']}>
