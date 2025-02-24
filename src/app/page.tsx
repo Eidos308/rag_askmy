@@ -36,6 +36,7 @@ export default function Chat() {
   const [isConnected, setIsConnected] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const websocketRef = useRef<WebSocket | null>(null);
+  const [isTyping, setIsTyping] = useState(false);
 
   // Initialize WebSocket connection
   const connectWebSocket = () => {
@@ -56,6 +57,7 @@ export default function Chat() {
 
     // Handle incoming messages
     websocketRef.current.onmessage = (event) => {
+      setIsTyping(false);
       try {
         const response = JSON.parse(event.data);
         const newMessage: Message = {
@@ -112,14 +114,13 @@ export default function Chat() {
       timestamp: new Date()
     };
 
-    const wsMessage: WebSocketMessage = {
+    setMessages(prev => [...prev, newMessage]);
+    websocketRef.current.send(JSON.stringify({
       action: "sendmessage",
       query: inputMessage
-    };
-
-    setMessages(prev => [...prev, newMessage]);
-    websocketRef.current.send(JSON.stringify(wsMessage));
+    }));
     setInputMessage('');
+    setIsTyping(true);
     scrollToBottom();
   };
 
@@ -174,14 +175,33 @@ export default function Chat() {
             <div className={styles['message-content']}>
               <p>{message.text}</p>
               <div className={styles['message-timestamp']}>
-                {message.timestamp.toLocaleTimeString([], {
+                {message.timestamp.toLocaleTimeString('es-ES', {
                   hour: '2-digit',
-                  minute: '2-digit'
+                  minute: '2-digit',
+                  hour12: false
                 })}
               </div>
             </div>
           </div>
         ))}
+        {isTyping && (
+          <div className={`${styles.message} ${styles['bot-message']} ${styles['typing-indicator']}`}>
+            <div className={styles['bot-avatar']}>
+              <Image
+                src="/askmy-logo-nobg.png"
+                alt="AskMy Logo"
+                width={30}
+                height={30}
+                className={styles['avatar-image']}
+              />
+            </div>
+            <div className={styles['typing-dots']}>
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        )}
         <div ref={messagesEndRef} style={{ height: 1 }} />
       </div>
 

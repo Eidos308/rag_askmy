@@ -13,8 +13,24 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AskMy - Virtual Medical Assistant",
-  description: "AI-powered virtual medical assistant to help with your health inquiries. Get reliable medical information and guidance.",
+  title: "AskMy",
+  description: "Virtual Medical Assistant",
+  icons: {
+    icon: [
+      { url: '/askmy-logo.jpeg', type: 'image/jpeg' },
+    ],
+    shortcut: ['/askmy-logo.jpeg'],
+    apple: [
+      { url: '/askmy-logo.jpeg' },
+    ],
+    other: [
+      {
+        rel: 'apple-touch-icon-precomposed',
+        url: '/askmy-logo.jpeg',
+      },
+    ],
+  },
+  manifest: '/manifest.json'
 };
 
 export default function RootLayout({
@@ -23,7 +39,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="es">
+      <head>
+        <link rel="icon" href="/askmy-logo.jpeg" />
+        <link rel="apple-touch-icon" href="/askmy-logo.jpeg" />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} font-sans bg-gray-50`}>
         <main className="min-h-screen max-w-4xl mx-auto p-4">
           {children}
