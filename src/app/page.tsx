@@ -78,7 +78,7 @@ export default function Chat() {
         };
         setMessages(prev => [...prev, newMessage]);
         scrollToBottom();
-      } catch (error) {
+      } catch {
         const newMessage: Message = {
           id: Date.now().toString(),
           text: "Sorry, I received an invalid response.",
