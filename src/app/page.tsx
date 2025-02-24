@@ -78,7 +78,7 @@ export default function Chat() {
         };
         setMessages(prev => [...prev, newMessage]);
         scrollToBottom();
-      } catch (_error) {
+      } catch {
         const newMessage: Message = {
           id: Date.now().toString(),
           text: "Lo siento, recibí una respuesta inválida.",
