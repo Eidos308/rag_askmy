@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Medical Assistant Chat",
-  description: "Virtual medical assistant powered by AI to help with your health inquiries",
+  title: "AskMy - Virtual Medical Assistant",
+  description: "AI-powered virtual medical assistant to help with your health inquiries. Get reliable medical information and guidance.",
 };
 
 export default function RootLayout({

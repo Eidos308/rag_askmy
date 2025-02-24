@@ -3,25 +3,25 @@
 @tailwind utilities;
 
 :root {
-  /* Paleta principal - Colores más claros y profesionales */
+  /* Main palette - Light and professional colors */
   --background: #fafafa;
   --foreground: #334155;
   --primary: #0284c7;
   --primary-light: #38bdf8;
   --primary-dark: #0369a1;
 
-  /* Colores de acento y estado */
+  /* Accent and state colors */
   --success: #059669;
   --warning: #eab308;
   --error: #dc2626;
 
-  /* Colores específicos para mensajes */
+  /* Message-specific colors */
   --bot-message-bg: #ffffff;
   --bot-message-border: #e2e8f0;
   --user-message-bg: #0284c7;
   --user-message-text: #ffffff;
 
-  /* Colores de interfaz */
+  /* Interface colors */
   --border-color: #f1f5f9;
   --input-bg: #ffffff;
   --header-bg: #ffffff;
@@ -54,10 +54,13 @@ body {
 }
 
 @layer components {
+
+  /* Main container styles */
   .chat-container {
     @apply max-w-3xl mx-auto h-screen flex flex-col;
   }
 
+  /* Header styles */
   .chat-header {
     @apply bg-[var(--header-bg)] px-4 py-3 border-b border-[var(--border-color)] flex items-center gap-3 sticky top-0 z-10;
   }
@@ -78,10 +81,12 @@ body {
     @apply text-xs text-slate-500 dark:text-slate-400;
   }
 
+  /* Messages container */
   .chat-messages {
     @apply flex-1 overflow-y-auto px-4 py-6 space-y-4;
   }
 
+  /* Message bubbles */
   .message {
     @apply max-w-[280px] sm:max-w-[380px] rounded-2xl px-4 py-2.5 transition-all duration-200 text-[15px] leading-relaxed;
   }
@@ -98,6 +103,7 @@ body {
     @apply text-[11px] opacity-60 mt-1 select-none;
   }
 
+  /* Input area */
   .chat-input-container {
     @apply border-t border-[var(--border-color)] bg-[var(--header-bg)] px-4 py-3 sticky bottom-0 z-10 relative;
   }
@@ -111,7 +117,7 @@ body {
   }
 }
 
-/* Animaciones para mensajes */
+/* Message animations */
 @keyframes slideIn {
   from {
     opacity: 0;
@@ -128,7 +134,7 @@ body {
   animation: slideIn 0.2s ease-out forwards;
 }
 
-/* Scrollbar personalizada */
+/* Custom scrollbar */
 .chat-messages::-webkit-scrollbar {
   width: 4px;
 }

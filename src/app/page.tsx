@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import styles from './chat.module.css';
 
+// Define the structure for chat messages
 interface Message {
   id: string;
   text: string;
@@ -10,6 +11,7 @@ interface Message {
   timestamp: Date;
 }
 
+// Define the structure for WebSocket messages
 interface WebSocketMessage {
   action: string;
   query: string;
@@ -17,6 +19,7 @@ interface WebSocketMessage {
 
 const WEBSOCKET_URL = process.env.NEXT_PUBLIC_WEBSOCKET_URL as string;
 
+// Medical cross icon component
 function MedicalIcon() {
   return (
     <svg
@@ -30,6 +33,7 @@ function MedicalIcon() {
 }
 
 export default function Chat() {
+  // Initialize chat with welcome message
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -38,14 +42,18 @@ export default function Chat() {
       timestamp: new Date()
     }
   ]);
+
+  // State management for chat functionality
   const [inputMessage, setInputMessage] = useState('');
   const [isConnected, setIsConnected] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const websocketRef = useRef<WebSocket | null>(null);
 
+  // Initialize WebSocket connection
   const connectWebSocket = () => {
     websocketRef.current = new WebSocket(WEBSOCKET_URL);
 
+    // Handle connection events
     websocketRef.current.onopen = () => {
       setIsConnected(true);
     };
@@ -58,6 +66,7 @@ export default function Chat() {
       setIsConnected(false);
     };
 
+    // Handle incoming messages
     websocketRef.current.onmessage = (event) => {
       try {
         const response = JSON.parse(event.data);
@@ -81,9 +90,11 @@ export default function Chat() {
     };
   };
 
+  // Connect WebSocket on component mount
   useEffect(() => {
     connectWebSocket();
 
+    // Cleanup on unmount
     return () => {
       if (websocketRef.current) {
         websocketRef.current.close();
@@ -91,10 +102,12 @@ export default function Chat() {
     };
   }, []);
 
+  // Auto-scroll to latest message
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // Handle message submission
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputMessage.trim() || !websocketRef.current || !isConnected) return;
@@ -123,6 +136,7 @@ export default function Chat() {
     }
   };
 
+  // Render chat interface
   return (
     <div className={styles['chat-container']}>
       <header className={styles['chat-header']}>
