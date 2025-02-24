@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import styles from './chat.module.css';
 import Image from 'next/image';
+import ReactMarkdown from 'react-markdown';
 
 // Define la estructura para los mensajes del chat
 interface Message {
@@ -12,14 +13,12 @@ interface Message {
   timestamp: Date;
 }
 
-const WEBSOCKET_URL = process.env.NEXT_PUBLIC_WEBSOCKET_URL as string;
-
 export default function Chat() {
   // Inicializa el chat con mensaje de bienvenida
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: "¡Hola! Soy tu asistente médico virtual. Puedo ayudarte con información médica general y preguntas. Ten en cuenta que no soy un sustituto del consejo médico profesional. ¿Cómo puedo ayudarte hoy?",
+      text: "¡Hola! Soy tu asistente médico virtual. Puedo ayudarte con información basada en los documentos disponibles. ¿Cómo puedo ayudarte hoy?",
       isBot: true,
       timestamp: new Date()
     }
@@ -27,98 +26,69 @@ export default function Chat() {
 
   // Gestión de estado para la funcionalidad del chat
   const [inputMessage, setInputMessage] = useState('');
-  const [isConnected, setIsConnected] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const websocketRef = useRef<WebSocket | null>(null);
   const [isTyping, setIsTyping] = useState(false);
 
-  // Inicializa la conexión WebSocket
-  const connectWebSocket = useCallback(() => {
-    websocketRef.current = new WebSocket(WEBSOCKET_URL);
+  // Función para procesar la pregunta usando LangChain
+  const processQuestion = async (question: string) => {
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ question }),
+      });
 
-    websocketRef.current.onopen = () => {
-      setIsConnected(true);
-    };
-
-    websocketRef.current.onclose = () => {
-      setIsConnected(false);
-    };
-
-    websocketRef.current.onerror = () => {
-      setIsConnected(false);
-    };
-
-    websocketRef.current.onmessage = (event) => {
-      setIsTyping(false);
-      try {
-        const response = JSON.parse(event.data);
-        const newMessage: Message = {
-          id: Date.now().toString(),
-          text: response.answer || response.error || "Lo siento, no pude procesar esa solicitud.",
-          isBot: true,
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, newMessage]);
-        scrollToBottom();
-      } catch {
-        const newMessage: Message = {
-          id: Date.now().toString(),
-          text: "Lo siento, recibí una respuesta inválida.",
-          isBot: true,
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, newMessage]);
-      }
-    };
-  }, []);
-
-  // Conecta WebSocket al montar el componente
-  useEffect(() => {
-    connectWebSocket();
-
-    return () => {
-      if (websocketRef.current) {
-        websocketRef.current.close();
-      }
-    };
-  }, [connectWebSocket]);
+      const data = await response.json();
+      return data.answer;
+    } catch (error) {
+      console.error('Error processing question:', error);
+      return "Lo siento, hubo un error al procesar tu pregunta.";
+    }
+  };
 
   // Auto-scroll al último mensaje
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({
-        behavior: 'smooth',
-        block: 'end'
-      });
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
   };
 
   // Maneja el envío de mensajes
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inputMessage.trim() || !websocketRef.current || !isConnected) return;
+    if (!inputMessage.trim() || isProcessing) return;
 
-    const newMessage: Message = {
+    // Agregar mensaje del usuario
+    const userMessage: Message = {
       id: Date.now().toString(),
       text: inputMessage,
       isBot: false,
       timestamp: new Date()
     };
 
-    setMessages(prev => [...prev, newMessage]);
-    websocketRef.current.send(JSON.stringify({
-      action: "sendmessage",
-      query: inputMessage
-    }));
+    setMessages(prev => [...prev, userMessage]);
     setInputMessage('');
+    setIsProcessing(true);
     setIsTyping(true);
     scrollToBottom();
-  };
+    
+    const answer = await processQuestion(inputMessage);
+    
+    setIsTyping(false);
 
-  const handleReconnect = () => {
-    if (!isConnected) {
-      connectWebSocket();
-    }
+    const botMessage: Message = {
+      id: (Date.now() + 1).toString(),
+      text: answer,
+      isBot: true,
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, botMessage]);
+    setIsProcessing(false);
+    scrollToBottom();
   };
 
   // Renderiza la interfaz del chat
@@ -138,9 +108,6 @@ export default function Chat() {
           <h1 className={styles['header-title']}>AskMy</h1>
           <p className={styles['header-subtitle']}>
             Virtual Medical Assistant
-            <span className={`${styles['connection-status']} ${isConnected ? styles.connected : styles.disconnected}`}>
-              •
-            </span>
           </p>
         </div>
       </header>
@@ -164,7 +131,11 @@ export default function Chat() {
               </div>
             )}
             <div className={styles['message-content']}>
-              <p>{message.text}</p>
+              {message.isBot ? (
+                <ReactMarkdown>{message.text}</ReactMarkdown>
+              ) : (
+                <p>{message.text}</p>
+              )}
               <div className={styles['message-timestamp']}>
                 {message.timestamp.toLocaleTimeString('es-ES', {
                   hour: '2-digit',
@@ -175,6 +146,7 @@ export default function Chat() {
             </div>
           </div>
         ))}
+        
         {isTyping && (
           <div className={`${styles.message} ${styles['bot-message']} ${styles['typing-indicator']}`}>
             <div className={styles['bot-avatar']}>
@@ -193,6 +165,7 @@ export default function Chat() {
             </div>
           </div>
         )}
+        
         <div ref={messagesEndRef} style={{ height: 1 }} />
       </div>
 
@@ -201,16 +174,15 @@ export default function Chat() {
           type="text"
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
-          placeholder={isConnected ? "Escribe tu pregunta médica..." : "Conectando..."}
+          placeholder="Escribe tu pregunta médica..."
           className={styles['chat-input']}
-          disabled={!isConnected}
+          disabled={isProcessing}
         />
         <button
           type="submit"
           className={styles['send-button']}
           aria-label="Send message"
-          disabled={!inputMessage.trim() || !isConnected}
-          onClick={!isConnected ? handleReconnect : undefined}
+          disabled={!inputMessage.trim() || isProcessing}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

@@ -77,6 +77,7 @@
     flex-direction: column;
     gap: 0.75rem;
     background: linear-gradient(to bottom, rgba(15, 48, 119, 0.02), transparent);
+    width: 100%;
 }
 
 .message {
@@ -89,6 +90,9 @@
     animation: messageAppear 0.3s ease-out forwards;
     font-size: 0.9375rem;
     line-height: 1.4;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
 }
 
 .message:hover {
@@ -135,6 +139,8 @@
 .message-content {
     flex: 1;
     position: relative;
+    width: 100%;
+    overflow-wrap: break-word;
 }
 
 .user-message {
@@ -149,6 +155,10 @@
     box-shadow: 0 2px 8px -2px rgba(15, 48, 119, 0.1);
     position: relative;
     overflow: hidden;
+    min-width: 80px;
+    max-width: 75%;
+    width: fit-content;
+    flex-shrink: 0;
 }
 
 .user-message::before {
@@ -303,7 +313,29 @@
     background: #0F3077;
     border-radius: 50%;
     animation: typingAnimation 1.4s ease-in-out infinite;
-    opacity: 0.4;
+}
+
+.typing-dots span:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.typing-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typingAnimation {
+    0%, 60%, 100% {
+        transform: translateY(0);
+        opacity: 0.6;
+    }
+    30% {
+        transform: translateY(-4px);
+        opacity: 1;
+    }
 }
 
 .typing-indicator .bot-avatar {
@@ -315,20 +347,14 @@
     border-radius: 50%;
 }
 
-@keyframes typingAnimation {
+@keyframes messageAppear {
     0% {
-        transform: translateY(0);
-        opacity: 0.4;
+        opacity: 0;
+        transform: translateY(10px);
     }
-
-    50% {
-        transform: translateY(-4px);
-        opacity: 0.8;
-    }
-
     100% {
+        opacity: 1;
         transform: translateY(0);
-        opacity: 0.4;
     }
 }
 
@@ -349,16 +375,4 @@
 
 .chat-messages::-webkit-scrollbar-thumb:hover {
     background-color: rgba(15, 48, 119, 0.2);
-}
-
-@keyframes messageAppear {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
